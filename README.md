@@ -12,9 +12,9 @@ Projeto acadêmico com foco em boas práticas de backend.
 - Spring Boot
 - Spring Data JPA
 - Hibernate
-- MySQL / H2 (para testes)
+- MySQL 
 - Maven
-- Swagger / OpenAPI
+- Swagger 
 - Bean Validation
 - Global Exception Handler
 
