@@ -4,6 +4,9 @@ import br.com.rogerio.api.pessoaendereco.DTO.PersonDto;
 import br.com.rogerio.api.pessoaendereco.DTO.PersonMapper;
 import br.com.rogerio.api.pessoaendereco.database.model.Person;
 import br.com.rogerio.api.pessoaendereco.service.PersonService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,33 +23,35 @@ public class PersonController {
     }
 
     @PostMapping
-    public PersonDto save(@RequestBody Person person) {
-        Person saved = service.save(person);
-        return PersonMapper.toDTO(saved);
+    public ResponseEntity<PersonDto> save(@Valid @RequestBody PersonDto dto) {
+        Person saved = service.save(PersonMapper.toEntity(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(PersonMapper.toDTO(saved));
     }
 
     @GetMapping
-    public List<PersonDto> findAll() {
-        return service.findAll()
+    public ResponseEntity<List<PersonDto>> findAll() {
+        List<PersonDto> people = service.findAll()
                 .stream()
                 .map(PersonMapper::toDTO)
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(people);
     }
 
     @GetMapping("/{id}")
-    public PersonDto findById(@PathVariable Integer id) {
+    public ResponseEntity<PersonDto> findById(@PathVariable Integer id) {
         Person person = service.findById(id);
-        return PersonMapper.toDTO(person);
+        return ResponseEntity.ok(PersonMapper.toDTO(person));
     }
 
     @PutMapping("/{id}")
-    public PersonDto update(@PathVariable Integer id, @RequestBody Person person) {
-        Person updated = service.update(id, person);
-        return PersonMapper.toDTO(updated);
+    public ResponseEntity<PersonDto> update(@PathVariable Integer id, @Valid @RequestBody PersonDto dto) {
+        Person updated = service.update(id, PersonMapper.toEntity(dto));
+        return ResponseEntity.ok(PersonMapper.toDTO(updated));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

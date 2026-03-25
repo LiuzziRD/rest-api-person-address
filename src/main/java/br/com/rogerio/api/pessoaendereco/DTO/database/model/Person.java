@@ -1,4 +1,4 @@
-package br.com.rogerio.api.pessoaendereco.database.model;
+package br.com.rogerio.api.pessoaendereco.DTO.database.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -97,5 +97,8 @@ public class Person {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public void setId(Integer id) {
     }
 }

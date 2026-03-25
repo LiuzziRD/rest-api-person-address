@@ -1,255 +1,164 @@
-# Person Address API
+# 📘 Projeto API Pessoa-Endereço
 
-## 📌 Description
-REST API desenvolvida em **Java 21 + Spring Boot** para gerenciar pessoas e seus endereços.  
-Permite criar, listar, buscar, atualizar e deletar pessoas, além de cadastrar múltiplos endereços para cada pessoa.  
-Projeto acadêmico com foco em boas práticas de backend.
+API REST desenvolvida em Java 21 + Spring Boot para gerenciar pessoas e seus endereços.
+A aplicação utiliza MySQL como banco de dados e possui documentação automática com Swagger (Springdoc OpenAPI).
 
----
+O projeto foi desenvolvido para fins acadêmicos, com foco em boas práticas de backend, organização em camadas e tratamento de exceções.
 
-## 🚀 Technologies
+--------------------------------------------------
+
+## 🚀 Pré-requisitos
+
+Antes de executar o projeto, instale:
+
 - Java 21
-- Spring Boot
-- Spring Data JPA
-- Hibernate
-- MySQL 
-- Maven
-- Swagger 
-- Bean Validation
-- Global Exception Handler
+- MySQL Server
+- Git
+- IntelliJ IDEA (recomendado)
+- Maven Wrapper (já incluído no projeto)
 
----
+Não é necessário instalar Maven globalmente.
 
-## 📂 Project Architecture
-Camadas: **Controller → Service → Repository → Database**
+--------------------------------------------------
 
-### Packages
-- `controller` → endpoints da API
-- `service` → regras de negócio
-- `repository` → acesso ao banco
-- `database.model` → entidades JPA
-- `dto` → objetos de transferência (PersonDto, AddressDto)
-- `mapper` → conversão Entity ↔ DTO
-- `exception` → exceções customizadas
-- `handler` → tratamento global de erros
-- `utils` → resposta de erro padronizada
+## 🛠️ Configuração do Banco de Dados
 
----
+Crie o banco no MySQL:
 
-## 📌 Features
-- CRUD de pessoas
-- CRUD de endereços aninhados
-- Regra de negócio: apenas **1 endereço principal por pessoa**
-- Validações com Bean Validation
-- Exceções customizadas (`NotFoundException`, `BusinessException`)
-- Tratamento de CPF duplicado (`409 Conflict`)
-- Swagger para documentação
+CREATE DATABASE db_projectapi;
 
----
+Copie o arquivo de exemplo para criar sua configuração real:
 
-## 📌 Endpoints
+cp src/main/resources/application-example.yaml src/main/resources/application.yaml
 
-### Pessoas
-- `POST /pessoas` → Criar pessoa
-- `GET /pessoas` → Listar todas
-- `GET /pessoas/{id}` → Buscar por ID
-- `PUT /pessoas/{id}` → Atualizar pessoa
-- `DELETE /pessoas/{id}` → Deletar pessoa
+Edite o arquivo:
 
-### Endereços (rotas aninhadas)
-- `POST /pessoas/{id}/enderecos` → Criar endereço para pessoa
-- `PUT /pessoas/{id}/enderecos/{enderecoId}` → Atualizar endereço
-- `DELETE /pessoas/{id}/enderecos/{enderecoId}` → Deletar endereço
+src/main/resources/application.yaml
 
----
+Configure usuário e senha:
 
-## 📌 Example Request/Response
+spring:
+datasource:
+url: jdbc:mysql://localhost:3306/db_projectapi
+username: root
+password: sua_senha
 
-### Criar pessoa
+--------------------------------------------------
 
-**Request**
-```json
-POST /pessoas
-{
-  "name": "Maria Silva",
-  "cpf": "12345678900",
-  "email": "maria@email.com",
-  "birthDate": "1990-05-10",
-  "phones": ["11999999999"]
-}
-```
+## ▶️ Como rodar o projeto
 
-**Response**
-```json
-{
-  "id": 1,
-  "name": "Maria Silva",
-  "cpf": "12345678900",
-  "email": "maria@email.com",
-  "birthDate": "1990-05-10",
-  "phones": ["11999999999"],
-  "addresses": []
-}
-```
+Linux / Mac
 
----
+./mvnw spring-boot:run
 
-### Criar endereço
+Windows (PowerShell)
 
-**Request**
-```json
-POST /pessoas/1/enderecos
-{
-  "street": "Rua das Flores",
-  "number": 100,
-  "neighborhood": "Centro",
-  "city": "São Paulo",
-  "state": "SP",
-  "zipCode": "01000-000",
-  "primaryAddress": true
-}
-```
+.\mvnw.cmd spring-boot:run
 
-**Response**
-```json
-{
-  "id": 1,
-  "street": "Rua das Flores",
-  "number": 100,
-  "neighborhood": "Centro",
-  "city": "São Paulo",
-  "state": "SP",
-  "zipCode": "01000-000",
-  "primaryAddress": true
-}
-```
+Se tudo estiver correto, a API irá subir em:
 
----
+http://localhost:8080
 
-## 📌 Validation
+--------------------------------------------------
 
-- `@NotBlank` → campos obrigatórios
-- `@NotNull` → valores não nulos
-- `@Valid` → validação em cascata
+## 📑 Documentação da API (Swagger)
 
-Erros são tratados pelo **GlobalExceptionHandler** e retornam JSON padronizado.
+Após iniciar o projeto, acesse:
 
----
-
-## 📌 Exception Handling
-
-Exceções customizadas:
-- NotFoundException
-- BusinessException
-
-Tratamento global:
-- GlobalExceptionHandler
-
-Exemplo de erro:
-
-```json
-{
-  "status": 409,
-  "error": "Conflict",
-  "message": "CPF já existe no sistema",
-  "path": "/pessoas"
-}
-```
-
----
-
-## 📌 Database
-
-Relacionamento:
-
-Person 1 → N Address
-
-Tabelas:
-- person
-- address
-- person_phone
-
-JPA / Hibernate usados para ORM.
-
----
-
-## 📌 Swagger
-
-Swagger UI disponível em:
-
-```
-http://localhost:8080/swagger-ui.html
-```
-
-ou
-
-```
 http://localhost:8080/swagger-ui/index.html
-```
 
----
+Lá estarão todos os endpoints disponíveis.
 
-## ▶ How to run
+--------------------------------------------------
 
-Configure o banco em `application.yaml` (MySQL ou H2).
+## 📌 Endpoints principais
 
-Execute com:
+Pessoas
 
-```
-mvn spring-boot:run
-```
+POST /pessoas → Criar pessoa  
+GET /pessoas/{id} → Buscar por ID  
+PUT /pessoas/{id} → Atualizar  
+DELETE /pessoas/{id} → Remover
 
-ou pelo IntelliJ.
+Endereços
 
-Acesse o Swagger para testar os endpoints.
+POST /pessoas/{id}/enderecos → Adicionar endereço  
+PUT /pessoas/{id}/enderecos/{enderecoId} → Atualizar endereço  
+DELETE /pessoas/{id}/enderecos/{enderecoId} → Remover endereço
 
----
+Regras de negócio:
 
-## 📌 Exemplo de configuração application.yaml
+- Uma pessoa pode ter vários endereços
+- Apenas um endereço pode ser principal
 
-### MySQL
+--------------------------------------------------
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/pessoa_endereco
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+## ⚠️ Tratamento de erros
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-```
+A API retorna erros padronizados em JSON.
 
-### H2 (memória)
+Erro de validação
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+{
+"status": 400,
+"error": "Validation Error",
+"message": "{cpf=CPF é obrigatório}",
+"path": "/pessoas"
+}
 
-  h2:
-    console:
-      enabled: true
+Recurso não encontrado
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-```
+{
+"status": 404,
+"error": "Not Found",
+"message": "Pessoa não encontrada",
+"path": "/pessoas/99"
+}
 
----
+--------------------------------------------------
 
-## 👨‍💻 Author
+## 📂 Estrutura do Projeto
 
-Rogerio Rissutti Liuzzi Junior  
-Computer Science Student  
-Backend Developer
+src/
+├── main/java/br/com/rogerio/api/pessoaendereco
+│    ├── controller   → Controllers REST
+│    ├── service      → Regras de negócio
+│    ├── database
+│    │     ├── model
+│    │     └── repository
+│    ├── dto          → DTOs com validação
+│    ├── exception    → Exceções customizadas
+│    ├── handler      → GlobalExceptionHandler
+│    └── utils        → Classes auxiliares
+│
+└── main/resources
+├── application.yaml
+└── application-example.yaml
+
+--------------------------------------------------
+
+## ✅ Funcionalidades implementadas
+
+- CRUD de pessoas
+- CRUD de endereços
+- Relacionamento Pessoa → Endereços
+- Validação com @Valid
+- Tratamento global de exceções
+- Respostas JSON padronizadas
+- Documentação com Swagger
+- Configuração externa com YAML
+- Maven Wrapper
+
+--------------------------------------------------
+
+## 🎯 Objetivo do projeto
+
+Este projeto foi desenvolvido para estudo de:
+
+- Spring Boot
+- API REST
+- JPA / Hibernate
+- Bean Validation
+- Tratamento de erros
+- Arquitetura em camadas
+- Boas práticas de backend

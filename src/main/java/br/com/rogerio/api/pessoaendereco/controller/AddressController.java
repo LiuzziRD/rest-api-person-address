@@ -4,6 +4,9 @@ import br.com.rogerio.api.pessoaendereco.DTO.AddressDto;
 import br.com.rogerio.api.pessoaendereco.DTO.AddressMapper;
 import br.com.rogerio.api.pessoaendereco.database.model.Address;
 import br.com.rogerio.api.pessoaendereco.service.AddressService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,22 +20,24 @@ public class AddressController {
     }
 
     @PostMapping
-    public AddressDto save(@PathVariable Integer pessoaId, @RequestBody Address address) {
-        Address saved = service.save(pessoaId, address);
-        return AddressMapper.toDTO(saved);
+    public ResponseEntity<AddressDto> save(@PathVariable Integer pessoaId,
+                                           @Valid @RequestBody AddressDto dto) {
+        Address saved = service.save(pessoaId, AddressMapper.toEntity(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(AddressMapper.toDTO(saved));
     }
 
     @PutMapping("/{enderecoId}")
-    public AddressDto update(@PathVariable Integer pessoaId,
-                             @PathVariable Integer enderecoId,
-                             @RequestBody Address address) {
-        Address updated = service.update(pessoaId, enderecoId, address);
-        return AddressMapper.toDTO(updated);
+    public ResponseEntity<AddressDto> update(@PathVariable Integer pessoaId,
+                                             @PathVariable Integer enderecoId,
+                                             @Valid @RequestBody AddressDto dto) {
+        Address updated = service.update(pessoaId, enderecoId, AddressMapper.toEntity(dto));
+        return ResponseEntity.ok(AddressMapper.toDTO(updated));
     }
 
     @DeleteMapping("/{enderecoId}")
-    public void delete(@PathVariable Integer pessoaId,
-                       @PathVariable Integer enderecoId) {
+    public ResponseEntity<Void> delete(@PathVariable Integer pessoaId,
+                                       @PathVariable Integer enderecoId) {
         service.delete(pessoaId, enderecoId);
+        return ResponseEntity.noContent().build();
     }
 }

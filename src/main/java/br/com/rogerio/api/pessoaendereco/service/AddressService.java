@@ -6,6 +6,7 @@ import br.com.rogerio.api.pessoaendereco.database.repository.AddressRepository;
 import br.com.rogerio.api.pessoaendereco.database.repository.PersonRepository;
 import br.com.rogerio.api.pessoaendereco.exception.BusinessException;
 import br.com.rogerio.api.pessoaendereco.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +20,14 @@ public class AddressService {
         this.addressRepository = addressRepository;
     }
 
+    @Transactional
     public Address save(Integer pessoaId, Address address) {
         Person person = personRepository.findById(pessoaId)
                 .orElseThrow(() -> new NotFoundException("Pessoa não encontrada"));
 
         address.setPerson(person);
 
+        // Se for marcado como principal, desmarca os outros
         if (Boolean.TRUE.equals(address.getPrimaryAddress())) {
             person.getAddresses().forEach(a -> a.setPrimaryAddress(false));
         }
@@ -32,6 +35,7 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
+    @Transactional
     public Address update(Integer pessoaId, Integer enderecoId, Address addressData) {
         Person person = personRepository.findById(pessoaId)
                 .orElseThrow(() -> new NotFoundException("Pessoa não encontrada"));
@@ -51,6 +55,7 @@ public class AddressService {
         address.setState(addressData.getState());
         address.setZipCode(addressData.getZipCode());
 
+        // Se for marcado como principal, desmarca os outros
         if (Boolean.TRUE.equals(addressData.getPrimaryAddress())) {
             person.getAddresses().forEach(a -> a.setPrimaryAddress(false));
             address.setPrimaryAddress(true);
@@ -61,6 +66,7 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
+    @Transactional
     public void delete(Integer pessoaId, Integer enderecoId) {
         Address address = addressRepository.findById(enderecoId)
                 .orElseThrow(() -> new NotFoundException("Endereço não encontrado"));
