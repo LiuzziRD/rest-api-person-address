@@ -1,14 +1,16 @@
 package br.com.rogerio.api.pessoaendereco.controller;
 
+import br.com.rogerio.api.pessoaendereco.DTO.PersonDto;
+import br.com.rogerio.api.pessoaendereco.DTO.PersonMapper;
 import br.com.rogerio.api.pessoaendereco.database.model.Person;
 import br.com.rogerio.api.pessoaendereco.service.PersonService;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/persons")
+@RequestMapping("/pessoas")
 public class PersonController {
 
     private final PersonService service;
@@ -18,18 +20,29 @@ public class PersonController {
     }
 
     @PostMapping
-    public Person save(@Valid @RequestBody Person person) {
-        return service.save(person);
+    public PersonDto save(@RequestBody Person person) {
+        Person saved = service.save(person);
+        return PersonMapper.toDTO(saved);
     }
 
     @GetMapping
-    public List<Person> findAll() {
-        return service.findAll();
+    public List<PersonDto> findAll() {
+        return service.findAll()
+                .stream()
+                .map(PersonMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Person findById(@PathVariable Integer id) {
-        return service.findById(id);
+    public PersonDto findById(@PathVariable Integer id) {
+        Person person = service.findById(id);
+        return PersonMapper.toDTO(person);
+    }
+
+    @PutMapping("/{id}")
+    public PersonDto update(@PathVariable Integer id, @RequestBody Person person) {
+        Person updated = service.update(id, person);
+        return PersonMapper.toDTO(updated);
     }
 
     @DeleteMapping("/{id}")

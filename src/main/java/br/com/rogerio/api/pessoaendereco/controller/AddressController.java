@@ -1,13 +1,13 @@
 package br.com.rogerio.api.pessoaendereco.controller;
 
+import br.com.rogerio.api.pessoaendereco.DTO.AddressDto;
+import br.com.rogerio.api.pessoaendereco.DTO.AddressMapper;
 import br.com.rogerio.api.pessoaendereco.database.model.Address;
 import br.com.rogerio.api.pessoaendereco.service.AddressService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/addresses")
+@RequestMapping("/pessoas/{pessoaId}/enderecos")
 public class AddressController {
 
     private final AddressService service;
@@ -17,22 +17,22 @@ public class AddressController {
     }
 
     @PostMapping
-    public Address save(@RequestBody Address address) {
-        return service.save(address);
+    public AddressDto save(@PathVariable Integer pessoaId, @RequestBody Address address) {
+        Address saved = service.save(pessoaId, address);
+        return AddressMapper.toDTO(saved);
     }
 
-    @GetMapping
-    public List<Address> findAll() {
-        return service.findAll();
+    @PutMapping("/{enderecoId}")
+    public AddressDto update(@PathVariable Integer pessoaId,
+                             @PathVariable Integer enderecoId,
+                             @RequestBody Address address) {
+        Address updated = service.update(pessoaId, enderecoId, address);
+        return AddressMapper.toDTO(updated);
     }
 
-    @GetMapping("/{id}")
-    public Address findById(@PathVariable Integer id) {
-        return service.findById(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
+    @DeleteMapping("/{enderecoId}")
+    public void delete(@PathVariable Integer pessoaId,
+                       @PathVariable Integer enderecoId) {
+        service.delete(pessoaId, enderecoId);
     }
 }

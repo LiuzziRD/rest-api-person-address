@@ -1,62 +1,22 @@
-package br.com.rogerio.api.pessoaendereco.database.model;
+package br.com.rogerio.api.pessoaendereco.DTO;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
-@Entity
-@Table(name = "address")
-public class Address {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AddressDto {
     private Integer id;
-
-    @NotBlank(message = "Street is required")
     private String street;
-
-    @NotNull(message = "Number is required")
     private Integer number;
-
     private String complement;
-
-    @NotBlank(message = "Neighborhood is required")
     private String neighborhood;
-
-    @NotBlank(message = "City is required")
     private String city;
-
-    @NotBlank(message = "State is required")
     private String state;
-
-    @NotBlank(message = "ZipCode is required")
     private String zipCode;
-
     private Boolean primaryAddress;
-
-    @ManyToOne
-    @JoinColumn(name = "person_id", nullable = false)
-    private Person person;
-
-    public Address() {
-    }
-
-    public Address(Integer id, String street, Integer number, String complement, String neighborhood, String city, String state, String zipCode, Boolean primaryAddress, Person person) {
-        this.id = id;
-        this.street = street;
-        this.number = number;
-        this.complement = complement;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.primaryAddress = primaryAddress;
-        this.person = person;
-    }
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getStreet() {
@@ -121,13 +81,5 @@ public class Address {
 
     public void setPrimaryAddress(Boolean primaryAddress) {
         this.primaryAddress = primaryAddress;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
     }
 }

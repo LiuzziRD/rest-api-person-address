@@ -1,5 +1,6 @@
 package br.com.rogerio.api.pessoaendereco.database.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,6 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     @NotBlank(message = "Name is required")
     private String name;
 
@@ -30,7 +30,7 @@ public class Person {
     @ElementCollection
     private List<String> phones;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid
     private List<Address> addresses;
 

@@ -1,35 +1,74 @@
 package br.com.rogerio.api.pessoaendereco.service;
 
 import br.com.rogerio.api.pessoaendereco.database.model.Address;
+import br.com.rogerio.api.pessoaendereco.database.model.Person;
 import br.com.rogerio.api.pessoaendereco.database.repository.AddressRepository;
+import br.com.rogerio.api.pessoaendereco.database.repository.PersonRepository;
+import br.com.rogerio.api.pessoaendereco.exception.BusinessException;
 import br.com.rogerio.api.pessoaendereco.exception.NotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AddressService {
 
-    private final AddressRepository repository;
+    private final PersonRepository personRepository;
+    private final AddressRepository addressRepository;
 
-    public AddressService(AddressRepository repository) {
-        this.repository = repository;
+    public AddressService(PersonRepository personRepository, AddressRepository addressRepository) {
+        this.personRepository = personRepository;
+        this.addressRepository = addressRepository;
     }
 
-    public Address save(Address address) {
-        return repository.save(address);
+    public Address save(Integer pessoaId, Address address) {
+        Person person = personRepository.findById(pessoaId)
+                .orElseThrow(() -> new NotFoundException("Pessoa não encontrada"));
+
+        address.setPerson(person);
+
+        if (Boolean.TRUE.equals(address.getPrimaryAddress())) {
+            person.getAddresses().forEach(a -> a.setPrimaryAddress(false));
+        }
+
+        return addressRepository.save(address);
     }
 
-    public List<Address> findAll() {
-        return repository.findAll();
+    public Address update(Integer pessoaId, Integer enderecoId, Address addressData) {
+        Person person = personRepository.findById(pessoaId)
+                .orElseThrow(() -> new NotFoundException("Pessoa não encontrada"));
+
+        Address address = addressRepository.findById(enderecoId)
+                .orElseThrow(() -> new NotFoundException("Endereço não encontrado"));
+
+        if (!address.getPerson().getId().equals(pessoaId)) {
+            throw new BusinessException("Endereço não pertence à pessoa informada");
+        }
+
+        address.setStreet(addressData.getStreet());
+        address.setNumber(addressData.getNumber());
+        address.setComplement(addressData.getComplement());
+        address.setNeighborhood(addressData.getNeighborhood());
+        address.setCity(addressData.getCity());
+        address.setState(addressData.getState());
+        address.setZipCode(addressData.getZipCode());
+
+        if (Boolean.TRUE.equals(addressData.getPrimaryAddress())) {
+            person.getAddresses().forEach(a -> a.setPrimaryAddress(false));
+            address.setPrimaryAddress(true);
+        } else {
+            address.setPrimaryAddress(addressData.getPrimaryAddress());
+        }
+
+        return addressRepository.save(address);
     }
 
-    public Address findById(Integer id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Address not found."));
-    }
+    public void delete(Integer pessoaId, Integer enderecoId) {
+        Address address = addressRepository.findById(enderecoId)
+                .orElseThrow(() -> new NotFoundException("Endereço não encontrado"));
 
-    public void delete(Integer id) {
-        repository.deleteById(id);
+        if (!address.getPerson().getId().equals(pessoaId)) {
+            throw new BusinessException("Endereço não pertence à pessoa informada");
+        }
+
+        addressRepository.delete(address);
     }
 }
