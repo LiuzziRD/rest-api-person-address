@@ -1,0 +1,59 @@
+HELP.md
+
+### Maven / Build ###
+target/
+dependency-reduced-pom.xml
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Wrapper ###
+.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Logs ###
+*.log
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### ENV / CONFIG (IMPORTANTE) ###
+src/main/resources/application.yaml
+src/main/resources/application.properties
+src/main/resources/application-local.yaml
+.env
+
+### Database ###
+*.db
+*.sqlite
+
+### Generated ###
+/target/
